@@ -1,32 +1,21 @@
- 
-var events = require('events');
-  
- 
+ var events = require('events');
 var eventEmitter = new events.EventEmitter();
-  
 var i;
 
-
-
-
 eventEmitter.on('first', function() {
-  
+console.log("EVENT 1");
 for(i=0;i<5;i++)
-
     console.log(i);
-eventEmitter.emit('secondevent');
-  
+eventEmitter.emit('second');
 }  );
 
 
 eventEmitter.on('second', function(){
-  
-   for(i=4;i>-1;i--)
-
+console.log("EVENT 2");
+for(i=4;i>-1;i--)
    console.log(i); 
 });
 
 
-eventEmitter.emit('firstevent');
-  
-console.log("Program Ended."); 
+eventEmitter.emit('first');
+console.log("Program Ended.");
