@@ -1,0 +1,186 @@
+<html><head>
+<script>
+var min=0,dist=0,xm=0,ym=0,limi=0;
+var x1=0,y1=0,x2=0,y2=0,rem_res=0,coef=0,res1=' ',res2=' ';
+function pfm(){
+var temp='';var dist=0,trm=0,xm=0,ym=0;
+var xs=parseFloat(document.getElementById("xs").value);
+var ys=parseFloat(document.getElementById("ys").value);
+var xc=parseFloat(document.getElementById("xc").value);
+var yc=parseFloat(document.getElementById("yc").value);
+var xd=parseFloat(document.getElementById("xd").value);
+var yd=parseFloat(document.getElementById("yd").value);
+var x=parseFloat(document.getElementById("x").value);
+var y=parseFloat(document.getElementById("y").value);
+
+
+//loop for ploting the points
+ for(var t=0; t<1; t+=0.1){
+   var xt = (1-t)*((1-t)*xs+t*xc)+t*((1-t)*xc+t*xd);
+   var yt = (1-t)*((1-t)*ys+t*yc)+t*((1-t)*yc+t*yd);
+   temp = temp + "<br>" + "(" + xt + " , " + yt + ")";
+ document.getElementById("res").innerHTML=temp;
+ }
+
+//Determining the limits
+ if(xc>=xs && xc<=xd){
+  document.getElementById("lim").innerHTML="Y-Limits";
+  limi=2;
+ }else
+ if(yc>=ys && yc<=yd){
+  document.getElementById("lim").innerHTML="X-Limits";
+  limi=1;
+ }else{
+  document.getElementById("lim").innerHTML="N/A";
+  limi=0;
+ } 
+
+//Closest point in the curve to the point of control
+ for(var t=0; t<1; t+=0.0001){
+  var xt = (1-t)*((1-t)*xs+t*xc)+t*((1-t)*xc+t*xd);
+  var yt = (1-t)*((1-t)*ys+t*yc)+t*((1-t)*yc+t*yd);
+  trm = Math.pow((xc-xt),2);
+  trm = trm + Math.pow((yc-yt),2);
+  dist=Math.sqrt(trm);
+  if(t==0){ min=dist; }
+    if(min>dist){
+      min=dist; xm=xt; ym=yt;
+    }
+ }
+document.getElementById("cpt").innerHTML = "Closest point : ("+xm+" , "+ym+")<br>Distance : "+min;
+
+
+//Determining whether in or out
+if(limi==2){ // Y-Limits
+
+ if(x>=xs && x<=xm){
+   x1=xs,y1=ys,x2=xm,y2=ym;
+   coef=(y2-y1)/(x2-x1);
+   rem_res=(coef*x1*-1)+y1;
+   res1=(coef*x)+rem_res; 
+
+   if(yc<ys || yc<yd){ //down
+     if(y<res1){
+      document.getElementById("io").innerHTML="In";
+     }else{
+      document.getElementById("io").innerHTML="Out";
+     }
+   }
+   if(yc>ys || yc>yd){ //up
+     if(y>res1){
+      document.getElementById("io").innerHTML="In";
+     }else{
+      document.getElementById("io").innerHTML="Out";
+     }
+   }
+ 
+ }else if(x>xm && x<=xd){
+
+   x1=xm,y1=ym,x2=xd,y2=yd;
+   coef=(y2-y1)/(x2-x1);
+   rem_res=(coef*x1*-1)+y1;
+   res2=(coef*x)+rem_res;
+
+   if(yc<ys || yc<yd){ //down
+     if(y<res2){
+      document.getElementById("io").innerHTML="In";
+     }else{
+      document.getElementById("io").innerHTML="Out";
+     }
+   }
+   if(yc>ys || yc>yd){ //up
+     if(y>res2){
+      document.getElementById("io").innerHTML="In";
+     }else{
+      document.getElementById("io").innerHTML="Out";
+     }
+   }
+   
+ }else{
+  document.getElementById("io").innerHTML="N/A";
+ }
+}
+if(limi==1){ // X-Limits
+
+ if(y>=ys && y<=ym){
+   x1=xs,y1=ys,x2=xm,y2=ym;
+   coef=(x2-x1)/(y2-y1);
+   rem_res=(coef*y1*-1)+x1;
+   res1=(coef*y)+rem_res; 
+
+   if(xc<=xs || xc<=xd){ //left
+     if(x<=res1){
+      document.getElementById("io").innerHTML="In";
+     }else{
+      document.getElementById("io").innerHTML="Out";
+     }
+   }
+   if(xc>=xs || xc>=xd){ //right
+     if(x>=res1){
+      document.getElementById("io").innerHTML="In";
+     }else{
+      document.getElementById("io").innerHTML="Out";
+     }
+   }
+ 
+ }else if(y>ym && y<=yd){
+
+   x1=xm,y1=ym,x2=xd,y2=yd;
+   coef=(x2-x1)/(y2-y1);
+   rem_res=(coef*y1*-1)+x1;
+   res2=(coef*y)+rem_res; 
+
+   if(xc<=xs || xc<=xd){ //left
+     if(x<=res2){
+      document.getElementById("io").innerHTML="In";
+     }else{
+      document.getElementById("io").innerHTML="Out";
+     }
+   }
+   if(xc>=xs || xc>=xd){ //right
+     if(x>=res2){
+      document.getElementById("io").innerHTML="In";
+     }else{
+      document.getElementById("io").innerHTML="Out";
+     }
+   }
+   
+ }else{
+  document.getElementById("io").innerHTML="N/A";
+ }
+}
+if(limi==0){
+document.getElementById("io").innerHTML="N/A";
+}
+//end of function
+}
+
+</script>
+</head>
+
+<body> <div align="center">
+
+<form><legend>Source</legend>
+x<input type="number" id="xs" value=0 onchange="pfm()">
+y<input type="number" id="ys" value=0 onchange="pfm()"> <br/>
+</form><br/>
+<form> <legend>Control point</legend>
+x<input type="number" id="xc" value=0 onchange="pfm()">
+y<input type="number" id="yc" value=0 onchange="pfm()"> <br/>
+</form><br/>
+<form> <legend>Destination</legend>
+x<input type="number" id="xd" value=0 onchange="pfm()">
+y<input type="number" id="yd" value=0 onchange="pfm()"> <br/>
+</form><br/>
+<form> <legend>Point</legend>
+x<input type="number" id="x" value=0 onchange="pfm()">
+y<input type="number" id="y" value=0 onchange="pfm()"> <br/>
+</form>
+
+<p id="res">Result will be displayed here</p>
+<p id="lim">Limits will be displayed here</p>
+<p id="cpt"> </p>
+<p id="io"> In/Out</p>
+</div> </body>
+
+</html>
