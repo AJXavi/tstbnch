@@ -27,7 +27,7 @@ var temp='';
  }else{
   document.getElementById("lim").innerHTML="N/A";
   limi=0;
- } 
+ }
 
 
 //loop for ploting the points//
@@ -124,11 +124,6 @@ switch(limi){
 
 }//end of function detect()
 
-function fun(){
-alert("res :"+res+"\nEqn:"+eqn);
-alert("line : "+line);
-alert("coef : "+coef);
-}
 </script>
 </head>
 
@@ -149,7 +144,6 @@ y<input type="number" id="yd" value=0 onchange="create_curve()"> <br/>
 <form> <legend>Point</legend>
 x<input type="number" id="x" value=0 onchange="detect()">
 y<input type="number" id="y" value=0 onchange="detect()"> <br/>
-<input type="button" value="show" onclick="fun()">
 </form>
 <br>
 <p id="lim">Limits will be displayed here</p>
