@@ -17,11 +17,15 @@ var temp='';
   yd=parseFloat(document.getElementById("yd").value);
 
 //Determining the limits//
- if(xc>=xs && xc<=xd){
+if(xc>=xs && xc<=xd){
+// if((xc>=xs && xc<=xd)||(xc<=xs && xc>=xd)){
+// Commented condition not recom (In/Out)
   document.getElementById("lim").innerHTML="Y-Limits";
   limi=2;
  }else
- if(yc>=ys && yc<=yd){
+if(yc>=ys && yc<=yd){
+ //if((yc>=ys && yc<=yd)||(yc<=ys && yc>=yd)){
+ // Commented condition not recom (In/Out)
   document.getElementById("lim").innerHTML="X-Limits";
   limi=1;
  }else{
