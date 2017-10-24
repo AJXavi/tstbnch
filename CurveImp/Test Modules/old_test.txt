@@ -1,0 +1,185 @@
+<html><head>
+<style>
+canvas{
+  border: 1px solid blue;
+  background-color: grey;
+}
+input{
+  width:50px;
+}
+body{
+  background-color: palegrey;
+  color: black;
+  font-weight:bold;
+}
+table{
+  border:1px solid black;
+}
+</style>
+
+<script>
+var i=0,tx=0,ty=0,limi=0,cnt=0,eqn=0,res=0;
+var line=[],ptx=[],pty=[],coef=[];
+var x1=0,y1=0,x2=0,y2=0;
+var xs=0,ys=0,xc=0,yc=0,xd=0,yd=0;
+
+function create_curve(){
+  xs=parseFloat(document.getElementById("xs").value);
+  ys=parseFloat(document.getElementById("ys").value);
+  xc=parseFloat(document.getElementById("xc").value);
+  yc=parseFloat(document.getElementById("yc").value);
+  xd=parseFloat(document.getElementById("xd").value);
+  yd=parseFloat(document.getElementById("yd").value);
+//Determining the limits//
+ if((xc>=xs && xc<=xd)||(xc<=xs && xc>=xd)){
+  document.getElementById("lim").innerHTML="Y-Limits";
+  limi=2;
+ }else
+ if((yc>=ys && yc<=yd)||(yc<=ys && yc>=yd)){
+  document.getElementById("lim").innerHTML="X-Limits";
+  limi=1;
+ }else{
+  document.getElementById("lim").innerHTML="N/A";
+  limi=0;
+ } 
+ 
+//loop for splitting the curve into lines//
+ tx=xs,ty=ys;cnt=0;
+  for(var t=0; t<1; t+=0.2){
+     var xt = (1-t)*((1-t)*xs+t*xc)+t*((1-t)*xc+t*xd);
+     var yt = (1-t)*((1-t)*ys+t*yc)+t*((1-t)*yc+t*yd);
+       x1=tx,y1=ty,x2=xt,y2=yt; //init
+       switch(limi){
+         case 2: // Y-Limit
+           coef[cnt]=(y2-y1)/(x2-x1);
+           line[cnt]=(coef[cnt]*x1*-1)+y1;
+           break;
+        case 1: // X-Limit
+           coef[cnt]=(x2-x1)/(y2-y1);
+           line[cnt]=(coef[cnt]*y1*-1)+x1;
+           break;
+       }	//end of case
+       ptx[cnt]=xt;pty[cnt]=yt; //itrate
+       cnt++;tx=xt;ty=yt;		//itrate
+  }			//end loop
+}			//end of function create_curve()
+
+function func_draw(){
+ xs=parseFloat(document.getElementById("xs").value);
+ ys=parseFloat(document.getElementById("ys").value);
+ xc=parseFloat(document.getElementById("xc").value);
+ yc=parseFloat(document.getElementById("yc").value);
+ xd=parseFloat(document.getElementById("xd").value);
+ yd=parseFloat(document.getElementById("yd").value);
+ var canvas = document.getElementById("cn");
+ var ctx = canvas.getContext("2d");
+ //Cleaning the canvas//
+   ctx.fillStyle = "grey";
+   ctx.fillRect(0,0,500,500);
+//drawing margins//
+var canvas = document.getElementById("cn");
+var ctx = canvas.getContext("2d");
+ctx.beginPath();
+ctx.moveTo(0, 250);
+ctx.lineTo(500, 250);
+ctx.stroke();
+ctx.beginPath();
+ctx.moveTo(250, 0);
+ctx.lineTo(250, 500);
+ctx.stroke();
+//Drawing curve//
+ for(var t=0; t<1; t+=0.0001){
+   var xt = (1-t)*((1-t)*xs+t*xc)+t*((1-t)*xc+t*xd);
+   var yt = (1-t)*((1-t)*ys+t*yc)+t*((1-t)*yc+t*yd);
+   ctx.fillStyle = "red";
+   ctx.fillRect(250+(xt*25),250-(yt*25),1,1);
+ }		//end of loop
+ //Plotting points (Source Distination and Control)//
+ ctx.fillStyle = "yellow";
+ ctx.fillRect(250+(xs*25),250-(ys*25),4,4);
+ ctx.fillRect(250+(xd*25),250-(yd*25),4,4);
+ ctx.fillStyle = "chartreuse";
+ ctx.fillRect(250+(xc*25),250-(yc*25),4,4);
+}		// End of Drawing function
+
+function detect(){
+var x=parseFloat(document.getElementById("x").value);
+var y=parseFloat(document.getElementById("y").value);
+//detecting index//
+switch(limi){
+ case 2: // Y-Limits
+  for(i=0;i<7;i++){
+   if(x<=ptx[i]){res=i;break;}
+  }
+  break;
+ case 1: // X-Limits
+  for(i=0;i<7;i++){
+   if(y<=pty[i]){res=i;break;}
+  }
+  break;
+}
+if(res==0){res=1;}
+
+//Whether In/Out//
+switch(limi){
+ case 2: // Y-Limits
+   eqn=(coef[res]*x)+line[res];
+   if(x<xs || x>xd){
+    document.getElementById("io").innerHTML="N/A";
+   }else
+   if(yc<ys || yc<yd){ // down
+    if(y<=eqn){
+     document.getElementById("io").innerHTML="In";
+    }else{
+     document.getElementById("io").innerHTML="Out";
+    }
+   }else
+   if(yc>ys || yc>yd){ //up
+    if(y>=eqn){
+     document.getElementById("io").innerHTML="In";
+    }else{
+     document.getElementById("io").innerHTML="Out";
+    }
+   }
+
+ case 1: // X-Limits
+   eqn=(coef[res]*y)+line[res];
+   if(y<ys || y>yd){
+    document.getElementById("io").innerHTML="N/A";
+   }else
+   if(xc<xs || xc<xd){ //left
+    if(x<=eqn){
+     document.getElementById("io").innerHTML="In";
+    }else{
+     document.getElementById("io").innerHTML="Out";
+    }
+   }else
+   if(xc>xs || xc>xd){ //right
+    if(x>=eqn){
+     document.getElementById("io").innerHTML="In";
+    }else{
+     document.getElementById("io").innerHTML="Out";
+    }
+   }
+}
+
+}			//end of function detect()
+</script>
+</head>
+
+<body> <div align="center">
+<table><tr><td> Source </td><td> x :<input type="number" id="xs" value=0 onchange="create_curve()"> </td><td>
+y :<input type="number" id="ys" value=0 onchange="create_curve()"> </td>
+<td> Control point </td><td> x :<input type="number" id="xc" value=0 onchange="create_curve()"> </td><td>
+y :<input type="number" id="yc" value=0 onchange="create_curve()"> </td></tr>
+<tr><td> Destination </td><td> x :<input type="number" id="xd" value=0 onchange="create_curve()"> </td><td>
+y :<input type="number" id="yd" value=0 onchange="create_curve()"> </td>
+<td>Point </td><td> x :<input type="number" id="x" value=0 onchange="detect()"> </td><td>
+y :<input type="number" id="y" value=0 onchange="detect()"> </td></tr></table><br>
+<font id="lim">Limits</font>&nbsp
+<font id="io"> In/Out</font><br>
+<input type="button" value="show" onclick="func_draw()"><br>
+<canvas id="cn" width="500" height="500"></canvas><br>
+</div> 
+</body>
+</html>
